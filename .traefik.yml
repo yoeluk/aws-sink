@@ -1,0 +1,10 @@
+displayName: AWS Sink
+type: middleware
+
+import: github.com/yoeluk/aws-sink
+
+summary: This middleware sink put request directly onto an aws service like S3 or Dynamodb. Currently, only S3 is supported.
+
+testData:
+  sinkType: local
+  localDirectory: local-sink

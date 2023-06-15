@@ -1,0 +1,51 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
+      - '.github/workflows/release.yaml'
+
+jobs:
+  build:
+    name: build
+    env:
+      GO_VERSION: 1.20.0
+      GOLANGCI_LINT_VERSION: v1.53
+      YAEGI_VERSION: v0.15.1
+      CGO_ENABLED: 0
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: set up go 1.x
+      uses: actions/setup-go@v3
+      with:
+        go-version: ^${{ env.GO_VERSION }}
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: setup GOPATH
+      run: go env -w GOPATH=${{ github.workspace }}/go
+
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: ${{ env.GOLANGCI_LINT_VERSION }}
+        args: "--help"
+
+    - name: lint test and build
+      run: make lint test build
+
+    - name: install yaegi
+      run: curl -sfL https://raw.githubusercontent.com/traefik/yaegi/master/install.sh | bash -s -- -b ${{ github.workspace }}/go/bin ${{ env.YAEGI_VERSION }}
+
+    - name: copy sources
+      run: make copy_src
+
+    - name: test with yaegi
+      run: ${{ github.workspace }}/go/bin/yaegi test -v github.com/yoeluk/aws-sink
+      env:
+        GOPATH: ${{ github.workspace }}/go

@@ -1,0 +1,15 @@
+api:
+  dashboard: true
+  insecure: true
+
+providers:
+  docker:
+    exposedByDefault: false
+
+experimental:
+  localPlugins:
+    aws-sink:
+      moduleName: github.com/yoeluk/aws-sink
+
+
+
