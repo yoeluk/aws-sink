@@ -17,13 +17,16 @@ services:
       # mount the plugin sources
       - .:/app/plugins-local/src/github.com/yoeluk/aws-sink
       # mount a local directory for the local sink
-      - .:/app/aws-sink-local
+      - ./storage:/app/aws-sink-local
     labels:
       - traefik.enable=true
-      - traefik.http.middlewares.awssink.plugin.aws-sink.sinkType=s3
-      - traefik.http.middlewares.awssink.plugin.aws-sink.bucket=devjam-yoel
-      - traefik.http.middlewares.awssink.plugin.aws-sink.region=us-west-2
-      - traefik.http.middlewares.awssink.plugin.aws-sink.prefix=/data
+      - traefik.http.middlewares.awssink.plugin.aws-sink.sinkType=local
+      - traefik.http.middlewares.awssink.plugin.aws-sink.localDirectory=aws-sink-local
+#        setting example for s3 sink
+#      - traefik.http.middlewares.awssink.plugin.aws-sink.sinkType=s3
+#      - traefik.http.middlewares.awssink.plugin.aws-sink.bucket=devjam-yoel
+#      - traefik.http.middlewares.awssink.plugin.aws-sink.region=us-west-2
+#      - traefik.http.middlewares.awssink.plugin.aws-sink.prefix=/data
       - traefik.http.routers.sink.service=noop@internal
       - traefik.http.routers.sink.rule=Host(`sink.docker.localhost`)
       - traefik.http.routers.sink.middlewares=awssink
