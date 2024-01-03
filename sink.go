@@ -13,6 +13,7 @@ import (
 
 type Sink interface {
 	Put(name string, payload []byte, contentType string, rw http.ResponseWriter) ([]byte, error)
+	Post(name string, payload []byte, contentType string, rw http.ResponseWriter) ([]byte, error)
 }
 
 type Config struct {
@@ -49,7 +50,14 @@ func (s AwsSink) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Error(fmt.Sprintf("found an error reading the body %s", err.Error()))
 		return
 	}
-	resp, err := s.sink.Put(r.URL.Path[1:], payload, r.Header.Get("Content-Type"), w)
+
+	var resp []byte
+	if r.Method == "POST" {
+		resp, err = s.sink.Post(r.URL.Path[1:], payload, r.Header.Get("Content-Type"), w)
+	} else {
+		resp, err = s.sink.Put(r.URL.Path[1:], payload, r.Header.Get("Content-Type"), w)
+	}
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		http.Error(w, fmt.Sprintf("encountered an error putting the object, error: %q", err.Error()), http.StatusInternalServerError)

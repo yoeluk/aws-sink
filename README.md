@@ -2,6 +2,10 @@
 
 AWS Sink is a `traefik` plugin that enable us to define a route to put data in S3 or dynamodb (not yet implemented) when `traefik` is deployed in ECS.
 
+## HTTP Verb Methods
+Use the `PUT` verb if you want to put an exact filename. 
+`POST` will append a [ULID](https://github.com/ulid/spec) to the path.  
+
 ### Example configuration
 
 `traefik.yml`

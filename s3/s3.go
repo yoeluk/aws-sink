@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/yoeluk/aws-sink/aws"
-	"github.com/yoeluk/aws-sink/log"
-	"github.com/yoeluk/aws-sink/signer"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/oklog/ulid/v2"
+	"github.com/yoeluk/aws-sink/aws"
+	"github.com/yoeluk/aws-sink/log"
+	"github.com/yoeluk/aws-sink/signer"
 )
 
 type Sink struct {
@@ -64,6 +66,10 @@ func (s *Sink) Put(name string, payload []byte, contentType string, rw http.Resp
 	}
 	copyHeader(rw.Header(), resp.Header)
 	return response, nil
+}
+
+func (s *Sink) Post(path string, payload []byte, contentType string, rw http.ResponseWriter) ([]byte, error) {
+	return s.Put(path+"/"+ulid.Make().String(), payload, contentType, rw)
 }
 
 func copyHeader(dst, src http.Header) {

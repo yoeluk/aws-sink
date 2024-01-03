@@ -2,11 +2,13 @@ package local
 
 import (
 	"fmt"
+	"net/http"
+	"os"
+
+	"github.com/oklog/ulid/v2"
 	"github.com/yoeluk/aws-sink/aws"
 	"github.com/yoeluk/aws-sink/log"
 	"github.com/yoeluk/aws-sink/signer"
-	"net/http"
-	"os"
 )
 
 type Sink struct {
@@ -42,4 +44,8 @@ func (s *Sink) Put(name string, payload []byte, contentType string, rw http.Resp
 	}
 	log.Debug(fmt.Sprintf("put %q object in %q local directory.", name, s.localDirectory))
 	return []byte(fmt.Sprintf("object %q was put in the local sink", name)), nil
+}
+
+func (s *Sink) Post(path string, payload []byte, contentType string, rw http.ResponseWriter) ([]byte, error) {
+	return s.Put(path+"/"+ulid.Make().String(), payload, contentType, rw)
 }
