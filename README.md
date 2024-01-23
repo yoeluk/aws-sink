@@ -4,7 +4,7 @@ AWS Sink is a `traefik` plugin that enable us to define a route to put data in S
 
 ## HTTP Verb Methods
 Use the `PUT` verb if you want to put an exact filename. 
-`POST` will append a [ULID](https://github.com/ulid/spec) to the path.  
+`POST` will append a UUID to the path.  
 
 ### Example configuration
 

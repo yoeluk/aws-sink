@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/oklog/ulid/v2"
+	"github.com/google/uuid"
 	"github.com/yoeluk/aws-sink/aws"
 	"github.com/yoeluk/aws-sink/log"
 	"github.com/yoeluk/aws-sink/signer"
@@ -47,5 +47,5 @@ func (s *Sink) Put(name string, payload []byte, contentType string, rw http.Resp
 }
 
 func (s *Sink) Post(path string, payload []byte, contentType string, rw http.ResponseWriter) ([]byte, error) {
-	return s.Put(path+"/"+ulid.Make().String(), payload, contentType, rw)
+	return s.Put(path+"/"+uuid.NewString(), payload, contentType, rw)
 }
